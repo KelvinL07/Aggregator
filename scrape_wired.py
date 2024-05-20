@@ -5,25 +5,19 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 
-# Path to your WebDriver
 webdriver_path = 'C:/Users/Kelvi/Downloads/chromedriver-win64/chromedriver-win64/chromedriver.exe'  # Ensure this path is correct
 
-# Set up the WebDriver
 service = Service(webdriver_path)
 options = webdriver.ChromeOptions()
 options.headless = True  # Run in headless mode
 driver = webdriver.Chrome(service=service, options=options)
 
-# Website to scrape
 url = "https://www.wired.com/"
 
-# Open the website
 driver.get(url)
 
-# Increase the wait time
 wait = WebDriverWait(driver, 20)
 
-# Wait for the main content to load
 try:
     main_content = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'main')))
 except Exception as e:
@@ -31,7 +25,6 @@ except Exception as e:
     driver.quit()
     exit()
 
-# Scroll to the bottom of the page to load more articles
 last_height = driver.execute_script("return document.body.scrollHeight")
 while True:
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
@@ -41,7 +34,7 @@ while True:
         break
     last_height = new_height
 
-# Extract all article links and titles
+
 articles = []
 try:
     article_elements = main_content.find_elements(By.CSS_SELECTOR, 'a.SummaryItemHedLink-civMjp')
@@ -56,12 +49,12 @@ try:
 except Exception as e:
     print(f"Exception extracting articles: {e}")
 
-# Print collected articles for debugging
+
 print(f"Collected {len(articles)} articles.")
 for article in articles:
     print(f"Title: {article['title']}, Link: {article['link']}")
 
-# Generate HTML content with links
+
 html_content = '''
 <!DOCTYPE html>
 <html lang="en">
@@ -106,11 +99,10 @@ html_content += '''
 </html>
 '''
 
-# Write HTML content to a file
 with open('index.html', 'w', encoding='utf-8') as file:
     file.write(html_content)
 
 print("HTML file generated successfully!")
 
-# Close the WebDriver
+
 driver.quit()
